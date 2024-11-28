@@ -101,7 +101,6 @@ MonoBehaviour:
   jumpForce: 5
   gravity: -9.81
   cameraRoot: {fileID: 473321618773217668}
-  virtualCamera: {fileID: 0}
 --- !u!1 &7461208221444028875
 GameObject:
   m_ObjectHideFlags: 0

@@ -18,20 +18,20 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnConnectedToMaster()
     {
+        Debug.Log("Connected to Master");
         RoomOptions options = new RoomOptions();
         options.IsOpen = true;
         options.IsVisible = true;
         options.MaxPlayers = 4;
-
         PhotonNetwork.JoinOrCreateRoom("Room1", options, TypedLobby.Default);
     }
 
     public override void OnJoinedRoom()
     {
+        Debug.Log("Joined Room");
         if (PhotonNetwork.IsMasterClient)
         {
             PhotonNetwork.LoadLevel("GameplayScene");
         }
-
     }
 }

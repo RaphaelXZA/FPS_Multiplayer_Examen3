@@ -6,17 +6,22 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] private string playerPrefabName = "Player";
     [SerializeField] private Transform[] spawnPoints;
 
-    void Start()
+    public override void OnJoinedRoom()
     {
-        if (PhotonNetwork.IsConnected)
-        {
-            SpawnPlayer();
-        }
+        Debug.Log("Joined Room, spawning player...");
+        SpawnPlayer();
     }
 
     void SpawnPlayer()
     {
-        Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-        PhotonNetwork.Instantiate(playerPrefabName, spawnPoint.position, spawnPoint.rotation);
+        if (PhotonNetwork.IsConnected && PhotonNetwork.InRoom)
+        {
+            Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+            PhotonNetwork.Instantiate(playerPrefabName, spawnPoint.position, spawnPoint.rotation);
+        }
+        else
+        {
+            Debug.LogWarning("Player is not in room to spawn");
+        }
     }
 }
