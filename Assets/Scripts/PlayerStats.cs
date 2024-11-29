@@ -138,7 +138,7 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
 
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
         Debug.Log($"Vida modificada a: {currentHealth}");
-        photonView.RPC("SyncHealth", RpcTarget.All, currentHealth);
+        photonView.RPC("SyncHealth", RpcTarget.AllBuffered, currentHealth);
 
         if (currentHealth <= 0)
         {
@@ -164,11 +164,9 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (!photonView.IsMine) return;
 
-        // Resetear puntuación
         score = 0;
         UpdateScore();
 
-        // Respawnear en un punto aleatorio
         if (GameManager.instance != null)
         {
             Transform spawnPoint = GameManager.instance.GetRandomSpawnPoint();
@@ -176,9 +174,8 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
             transform.rotation = spawnPoint.rotation;
         }
 
-        // Restaurar vida
         currentHealth = maxHealth;
-        photonView.RPC("SyncHealth", RpcTarget.All, currentHealth);
+        photonView.RPC("SyncHealth", RpcTarget.AllBuffered, currentHealth);
     }
 
     [PunRPC]
@@ -189,19 +186,40 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     [PunRPC]
-    private void SyncHealth(float health)
-    {
-        currentHealth = health;
-        UpdateWorldUI();
-    }
-
-    [PunRPC]
     private void SyncMaterial(int index)
     {
         materialIndex = index;
         if (playerMeshRenderer != null && PlayerMaterialManager.Instance != null)
         {
             playerMeshRenderer.material = PlayerMaterialManager.Instance.GetMaterialByIndex(index);
+        }
+    }
+
+    [PunRPC]
+    private void TakeDamage(float damage, int shooterViewID)
+    {
+        currentHealth = Mathf.Clamp(currentHealth - damage, 0, maxHealth);
+        Debug.Log($"Vida modificada a: {currentHealth}");
+
+        UpdateWorldUI();
+        if (photonView.IsMine)
+        {
+            UpdatePersonalUI();
+
+            if (currentHealth <= 0)
+            {
+                PhotonView shooterView = PhotonView.Find(shooterViewID);
+                if (shooterView != null)
+                {
+                    PlayerStats shooterStats = shooterView.GetComponent<PlayerStats>();
+                    if (shooterStats != null)
+                    {
+                        shooterStats.AddScore(100);
+                    }
+                }
+
+                Die();
+            }
         }
     }
 
