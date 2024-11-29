@@ -6,7 +6,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] private string playerPrefabName = "Player";
     [SerializeField] private Transform[] spawnPoints;
 
-    private static GameManager instance;
+    public static GameManager instance;
 
     private void Awake()
     {
@@ -58,5 +58,10 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             Debug.LogError($"Cannot spawn player - Connected: {PhotonNetwork.IsConnected}, InRoom: {PhotonNetwork.InRoom}");
         }
+    }
+
+    public Transform GetRandomSpawnPoint()
+    {
+        return spawnPoints[Random.Range(0, spawnPoints.Length)];
     }
 }

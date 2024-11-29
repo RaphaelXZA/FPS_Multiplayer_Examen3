@@ -29,6 +29,8 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private MeshRenderer playerMeshRenderer;
     private int materialIndex;
 
+    public float GetCurrentHealth() => currentHealth;
+
     private void Awake()
     {
         currentHealth = maxHealth;
@@ -131,7 +133,12 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
         if (!photonView.IsMine) return;
 
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
-        photonView.RPC("SyncHealth", RpcTarget.AllBuffered, currentHealth);
+        photonView.RPC("SyncHealth", RpcTarget.All, currentHealth);
+
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
     }
 
     public void AddScore(int points)
@@ -140,6 +147,32 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
 
         score += points;
         UpdateScore();
+    }
+
+    public Material GetPlayerMaterial()
+    {
+        return playerMeshRenderer.material;
+    }
+
+    public void Die()
+    {
+        if (!photonView.IsMine) return;
+
+        // Resetear puntuación
+        score = 0;
+        UpdateScore();
+
+        // Respawnear en un punto aleatorio
+        if (GameManager.instance != null)
+        {
+            Transform spawnPoint = GameManager.instance.GetRandomSpawnPoint();
+            transform.position = spawnPoint.position;
+            transform.rotation = spawnPoint.rotation;
+        }
+
+        // Restaurar vida
+        currentHealth = maxHealth;
+        photonView.RPC("SyncHealth", RpcTarget.All, currentHealth);
     }
 
     [PunRPC]

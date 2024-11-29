@@ -9,6 +9,12 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private float jumpForce = 5f;
     [SerializeField] private float gravity = -9.81f;
 
+    [Header("Shooting")]
+    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private Transform firePoint;
+    [SerializeField] private float fireRate = 0.1f;
+    private float nextFireTime;
+
     [Header("References")]
     [SerializeField] private Transform cameraRoot;
 
@@ -75,6 +81,30 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+        }
+
+        if (Input.GetButton("Fire1") && Time.time >= nextFireTime)
+        {
+            Shoot();
+            nextFireTime = Time.time + fireRate;
+        }
+    }
+
+    private void Shoot()
+    {
+        if (firePoint != null)
+        {
+            GameObject bulletObj = PhotonNetwork.Instantiate(bulletPrefab.name,
+                firePoint.position,
+                firePoint.rotation);
+
+            Bullet bullet = bulletObj.GetComponent<Bullet>();
+            if (bullet != null)
+            {
+                PlayerStats myStats = GetComponent<PlayerStats>();
+                Material playerMaterial = myStats.GetPlayerMaterial();
+                bullet.Initialize(photonView, playerMaterial);
+            }
         }
     }
 
