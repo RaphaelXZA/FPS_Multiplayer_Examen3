@@ -12,6 +12,7 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private float maxHealth = 100f;
     private float currentHealth;
     private int score;
+    [SerializeField] private int pointsPerKill = 100;
 
     [Header("World UI")]
     [SerializeField] private GameObject worldCanvas;
@@ -142,7 +143,7 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
 
         if (currentHealth <= 0)
         {
-            Debug.Log("Jugador murió");
+            Debug.Log($"¡{playerName} murió!");
             Die();
         }
     }
@@ -214,7 +215,7 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
                     PlayerStats shooterStats = shooterView.GetComponent<PlayerStats>();
                     if (shooterStats != null)
                     {
-                        shooterStats.AddScore(100);
+                        shooterStats.AddScore(pointsPerKill);
                     }
                 }
 

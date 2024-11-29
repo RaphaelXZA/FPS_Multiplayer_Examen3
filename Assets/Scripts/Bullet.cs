@@ -9,7 +9,6 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private float speed = 30f;
     [SerializeField] private float damage = 20f;
     [SerializeField] private float lifetime = 3f;
-    [SerializeField] private int pointsPerKill = 100;
 
     private PhotonView shooterPhotonView; //Para saber quién disparó
     private Material bulletMaterial;
