@@ -51,7 +51,7 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
             SetupPersonalUI();
         }
 
-        SetupWorldUI();
+        UpdateWorldUI();
         photonView.RPC("SyncPlayerName", RpcTarget.AllBuffered, playerName);
     }
 
@@ -61,31 +61,6 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
         {
             worldCanvas.gameObject.SetActive(false);
         }
-    }
-
-    private void SetupWorldUI()
-    {
-        if (worldCanvas != null)
-        {
-            worldCanvas.GetComponent<Canvas>().renderMode = RenderMode.WorldSpace;
-            worldCanvas.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
-        }
-
-        if (healthBarBackground != null)
-        {
-            healthBarBackground.type = Image.Type.Filled;
-            healthBarBackground.fillMethod = Image.FillMethod.Horizontal;
-            healthBarBackground.fillAmount = 1f;
-        }
-
-        if (healthBarFill != null)
-        {
-            healthBarFill.type = Image.Type.Filled;
-            healthBarFill.fillMethod = Image.FillMethod.Horizontal;
-            healthBarFill.fillAmount = 1f;
-        }
-
-        UpdateWorldUI();
     }
 
     private void SetupPersonalUI()
