@@ -57,13 +57,10 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
 
     private void Start()
     {
-        // Si es el jugador local, desactivamos su World Canvas
         if (photonView.IsMine && worldCanvas != null)
         {
             worldCanvas.gameObject.SetActive(false);
         }
-
-        // El resto de tu código de Start si lo tienes...
     }
 
     private void SetupWorldUI()
