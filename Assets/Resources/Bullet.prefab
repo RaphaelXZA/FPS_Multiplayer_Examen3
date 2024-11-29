@@ -173,4 +173,3 @@ MonoBehaviour:
   speed: 30
   damage: 20
   lifetime: 3
-  pointsPerKill: 100

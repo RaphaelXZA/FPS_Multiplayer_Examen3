@@ -151,9 +151,7 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
     public void AddScore(int points)
     {
         if (!photonView.IsMine) return;
-
-        score += points;
-        UpdateScore();
+        photonView.RPC("AddScoreRPC", RpcTarget.AllBuffered, points);
     }
 
     public Material GetPlayerMaterial()
@@ -213,18 +211,32 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
 
             if (currentHealth <= 0)
             {
-                PhotonView shooterView = PhotonView.Find(shooterViewID);
-                if (shooterView != null)
+                // Si hay un tirador válido (no es un respawn)
+                if (shooterViewID != -1)
                 {
-                    PlayerStats shooterStats = shooterView.GetComponent<PlayerStats>();
-                    if (shooterStats != null)
+                    Debug.Log($"Buscando tirador con ViewID: {shooterViewID}");
+                    PhotonView shooterView = PhotonView.Find(shooterViewID);
+                    if (shooterView != null)
                     {
-                        shooterStats.AddScore(pointsPerKill);
+                        Debug.Log("Tirador encontrado");
+                        // Usar RPC para asignar puntos al tirador
+                        shooterView.RPC("AddScoreRPC", RpcTarget.AllBuffered, pointsPerKill);
                     }
                 }
 
                 Die();
             }
+        }
+    }
+
+    [PunRPC]
+    private void AddScoreRPC(int points)
+    {
+        if (photonView.IsMine)
+        {
+            score += points;
+            Debug.Log($"Puntos añadidos: {points}, Total: {score}");
+            UpdateScore();
         }
     }
 

@@ -360,6 +360,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerName: 
   maxHealth: 100
+  pointsPerKill: 100
   worldCanvas: {fileID: 1765839216680909058}
   nameText: {fileID: 5586025445765088358}
   healthBarBackground: {fileID: 6439754500262780187}
