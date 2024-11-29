@@ -25,6 +25,10 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private Image personalHealthBarFill;       
     [SerializeField] private TextMeshProUGUI scoreText;
 
+    [Header("Visual")]
+    [SerializeField] private MeshRenderer playerMeshRenderer;
+    private int materialIndex;
+
     private void Awake()
     {
         currentHealth = maxHealth;
@@ -46,6 +50,16 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
             else
             {
                 Debug.LogError("¡UIManager not found!");
+            }
+
+            if (PlayerMaterialManager.Instance != null && playerMeshRenderer != null)
+            {
+                Material randomMaterial = PlayerMaterialManager.Instance.GetRandomMaterial();
+                if (randomMaterial != null)
+                {
+                    materialIndex = Random.Range(0, PlayerMaterialManager.Instance.availableMaterials.Length);
+                    photonView.RPC("SyncMaterial", RpcTarget.AllBuffered, materialIndex);
+                }
             }
 
             SetupPersonalUI();
@@ -146,17 +160,33 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
         UpdateWorldUI();
     }
 
+    [PunRPC]
+    private void SyncMaterial(int index)
+    {
+        materialIndex = index;
+        if (playerMeshRenderer != null && PlayerMaterialManager.Instance != null)
+        {
+            Material[] materials = PlayerMaterialManager.Instance.availableMaterials;
+            if (index >= 0 && index < materials.Length)
+            {
+                playerMeshRenderer.material = materials[index];
+            }
+        }
+    }
+
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
         {
             stream.SendNext(currentHealth);
             stream.SendNext(score);
+            stream.SendNext(materialIndex);
         }
         else
         {
             currentHealth = (float)stream.ReceiveNext();
             score = (int)stream.ReceiveNext();
+            materialIndex = (int)stream.ReceiveNext();
 
             UpdateWorldUI();
             if (photonView.IsMine)

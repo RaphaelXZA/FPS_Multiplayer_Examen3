@@ -363,6 +363,7 @@ MonoBehaviour:
   personalHealthBarBackground: {fileID: 0}
   personalHealthBarFill: {fileID: 0}
   scoreText: {fileID: 0}
+  playerMeshRenderer: {fileID: 975151922469154661}
 --- !u!1 &5607322919487739662
 GameObject:
   m_ObjectHideFlags: 0
