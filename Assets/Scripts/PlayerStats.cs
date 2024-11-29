@@ -54,12 +54,8 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
 
             if (PlayerMaterialManager.Instance != null && playerMeshRenderer != null)
             {
-                Material randomMaterial = PlayerMaterialManager.Instance.GetRandomMaterial();
-                if (randomMaterial != null)
-                {
-                    materialIndex = Random.Range(0, PlayerMaterialManager.Instance.availableMaterials.Length);
-                    photonView.RPC("SyncMaterial", RpcTarget.AllBuffered, materialIndex);
-                }
+                materialIndex = PlayerMaterialManager.Instance.GetUnusedMaterialIndex();
+                photonView.RPC("SyncMaterial", RpcTarget.AllBuffered, materialIndex);
             }
 
             SetupPersonalUI();
@@ -166,11 +162,7 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
         materialIndex = index;
         if (playerMeshRenderer != null && PlayerMaterialManager.Instance != null)
         {
-            Material[] materials = PlayerMaterialManager.Instance.availableMaterials;
-            if (index >= 0 && index < materials.Length)
-            {
-                playerMeshRenderer.material = materials[index];
-            }
+            playerMeshRenderer.material = PlayerMaterialManager.Instance.GetMaterialByIndex(index);
         }
     }
 
@@ -193,6 +185,14 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
             {
                 UpdatePersonalUI();
             }
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (photonView.IsMine && PlayerMaterialManager.Instance != null)
+        {
+            PlayerMaterialManager.Instance.ReleaseMaterialIndex(materialIndex);
         }
     }
 }
