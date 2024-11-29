@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
             Cursor.visible = true;
         }
 
-        if (Input.GetButton("Fire1") && Time.time >= nextFireTime)
+        if (Input.GetButtonDown("Fire1") && Time.time >= nextFireTime)
         {
             Shoot();
             nextFireTime = Time.time + fireRate;
@@ -106,6 +106,11 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
                 bullet.Initialize(photonView, playerMaterial);
             }
         }
+    }
+
+    public void ResetVelocity()
+    {
+        velocity = Vector3.zero;
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

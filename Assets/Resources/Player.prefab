@@ -338,13 +338,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec0393d8dcf59bf41bc31a3f3de6f620, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  moveSpeed: 10
   jumpForce: 5
   gravity: -9.81
   bulletPrefab: {fileID: 3140570372253088235, guid: 2a1b64bd0811d364e9da350d985cb904,
     type: 3}
   firePoint: {fileID: 6075860547338593190}
-  fireRate: 0.1
+  fireRate: 0
   cameraRoot: {fileID: 473321618773217668}
 --- !u!114 &5952069426374496626
 MonoBehaviour:

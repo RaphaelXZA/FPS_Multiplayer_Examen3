@@ -30,11 +30,15 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private MeshRenderer playerMeshRenderer;
     private int materialIndex;
 
+    [Header("References")]
+    private PlayerController playerController;
+
     public float GetCurrentHealth() => currentHealth;
 
     private void Awake()
     {
         currentHealth = maxHealth;
+        playerController = GetComponent<PlayerController>();
 
         if (photonView.IsMine)
         {
@@ -168,6 +172,11 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
 
         if (GameManager.instance != null)
         {
+            if (playerController != null)
+            {
+                playerController.ResetVelocity();
+            }
+
             Transform spawnPoint = GameManager.instance.GetRandomSpawnPoint();
             transform.position = spawnPoint.position;
             transform.rotation = spawnPoint.rotation;
