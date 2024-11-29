@@ -176,7 +176,11 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
         }
 
         currentHealth = maxHealth;
-        photonView.RPC("SyncHealth", RpcTarget.AllBuffered, currentHealth);
+
+        UpdateWorldUI();
+        UpdatePersonalUI();
+
+        photonView.RPC("TakeDamage", RpcTarget.AllBuffered, 0f, -1);
     }
 
     [PunRPC]
