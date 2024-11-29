@@ -13,17 +13,19 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
     private PhotonView shooterPhotonView; //Para saber quién disparó
     private Material bulletMaterial;
     private Rigidbody rb;
+    private int materialIndex;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
     }
 
-    public void Initialize(PhotonView shooter, Material material)
+    public void Initialize(PhotonView shooter, int shooterMaterialIndex)
     {
         shooterPhotonView = shooter;
-        bulletMaterial = material;
-        GetComponent<MeshRenderer>().material = bulletMaterial;
+        materialIndex = shooterMaterialIndex;
+
+        photonView.RPC("SyncBulletMaterial", RpcTarget.AllBuffered, materialIndex);
 
         Destroy(gameObject, lifetime);
     }
@@ -59,5 +61,15 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         //Solo para que el Photon View lo acepte
+    }
+
+    [PunRPC]
+    private void SyncBulletMaterial(int index)
+    {
+        if (PlayerMaterialManager.Instance != null)
+        {
+            Material bulletMaterial = PlayerMaterialManager.Instance.GetMaterialByIndex(index);
+            GetComponent<MeshRenderer>().material = bulletMaterial;
+        }
     }
 }

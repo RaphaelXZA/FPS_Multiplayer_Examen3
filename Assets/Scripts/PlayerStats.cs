@@ -190,6 +190,11 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
         photonView.RPC("TakeDamage", RpcTarget.AllBuffered, 0f, -1);
     }
 
+    public int GetMaterialIndex()
+    {
+        return materialIndex;
+    }
+
     [PunRPC]
     private void SyncPlayerName(string name)
     {
@@ -220,7 +225,6 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
 
             if (currentHealth <= 0)
             {
-                // Si hay un tirador válido (no es un respawn)
                 if (shooterViewID != -1)
                 {
                     Debug.Log($"Buscando tirador con ViewID: {shooterViewID}");
@@ -228,7 +232,7 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
                     if (shooterView != null)
                     {
                         Debug.Log("Tirador encontrado");
-                        // Usar RPC para asignar puntos al tirador
+                        //Usar RPC para asignar puntos al tirador
                         shooterView.RPC("AddScoreRPC", RpcTarget.AllBuffered, pointsPerKill);
                     }
                 }

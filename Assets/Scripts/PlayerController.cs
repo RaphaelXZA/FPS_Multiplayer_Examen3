@@ -102,8 +102,8 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
             if (bullet != null)
             {
                 PlayerStats myStats = GetComponent<PlayerStats>();
-                Material playerMaterial = myStats.GetPlayerMaterial();
-                bullet.Initialize(photonView, playerMaterial);
+                int materialIndex = myStats.GetMaterialIndex();
+                bullet.Initialize(photonView, materialIndex);
             }
         }
     }
