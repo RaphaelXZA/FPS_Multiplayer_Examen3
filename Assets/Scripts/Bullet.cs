@@ -36,24 +36,39 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!photonView.IsMine) return;
+        if (!photonView.IsMine)
+        {
+            Debug.Log("Bala no es mía");
+            return;
+        }
 
         PlayerStats playerStats = other.GetComponent<PlayerStats>();
-        if (playerStats != null && playerStats.photonView != shooterPhotonView)
+        if (playerStats == null)
         {
-            playerStats.ChangeHealth(-damage);
-
-            if (playerStats.GetCurrentHealth() <= 0)
-            {
-                PlayerStats shooterStats = shooterPhotonView.GetComponent<PlayerStats>();
-                if (shooterStats != null)
-                {
-                    shooterStats.AddScore(pointsPerKill);
-                }
-            }
-
-            PhotonNetwork.Destroy(gameObject);
+            Debug.Log($"Colisionó con objeto sin PlayerStats: {other.gameObject.name}");
+            return;
         }
+
+        if (playerStats.photonView == shooterPhotonView)
+        {
+            Debug.Log("Colisionó con el jugador que disparó");
+            return;
+        }
+
+        Debug.Log($"Aplicando daño de {damage} al jugador");
+        playerStats.ChangeHealth(-damage);
+
+        if (playerStats.GetCurrentHealth() <= 0)
+        {
+            PlayerStats shooterStats = shooterPhotonView.GetComponent<PlayerStats>();
+            if (shooterStats != null)
+            {
+                shooterStats.AddScore(pointsPerKill);
+                Debug.Log("Jugador eliminado, puntos añadidos");
+            }
+        }
+
+        PhotonNetwork.Destroy(gameObject);
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

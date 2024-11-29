@@ -130,13 +130,19 @@ public class PlayerStats : MonoBehaviourPunCallbacks, IPunObservable
 
     public void ChangeHealth(float amount)
     {
-        if (!photonView.IsMine) return;
+        if (!photonView.IsMine)
+        {
+            Debug.Log("Intento de cambiar vida en jugador que no es mío");
+            return;
+        }
 
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
+        Debug.Log($"Vida modificada a: {currentHealth}");
         photonView.RPC("SyncHealth", RpcTarget.All, currentHealth);
 
         if (currentHealth <= 0)
         {
+            Debug.Log("Jugador murió");
             Die();
         }
     }
